@@ -53,8 +53,12 @@ class HashTable:
         Fill this in.
         '''
 
-
-        pass
+        if self.count == self.capacity:
+            self.resize()
+        idx = self._hash_mod(key)
+        if self.storage[idx] != None:
+            print("** Warning! A previous entry is being overwritten! **")
+        self.storage[idx] = LinkedPair(key, value)
 
 
 
@@ -90,7 +94,8 @@ class HashTable:
         self.capacity *= 2
         temp_storage = [None] * self.capacity
         for i in range(self.count):
-            temp_storage[i] = self.storage[i]
+            new_idx = self._hash_mod(self.storage[i].key)
+            temp_storage[new_idx] = self.storage[i]
         self.storage = temp_storage
 
 
