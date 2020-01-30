@@ -70,7 +70,11 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        idx = self._hash_mod(key)
+        if self.storage[idx] == None:
+            print("** Warning! Key not found! **")
+        else:
+            self.storage[idx] = None
 
 
     def retrieve(self, key):
