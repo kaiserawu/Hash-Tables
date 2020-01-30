@@ -15,7 +15,6 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
-        self.count = 0
 
 
     def _hash(self, key):
@@ -53,8 +52,6 @@ class HashTable:
         Fill this in.
         '''
 
-        if self.count == self.capacity:
-            self.resize()
         idx = self._hash_mod(key)
         if self.storage[idx] != None:
             print("** Warning! A previous entry is being overwritten! **")
@@ -87,9 +84,9 @@ class HashTable:
         '''
         idx = self._hash_mod(key)
         if self.storage[idx] != None:
-            return self.storage[idx].value
-        else:
-            return None
+            if self.storage[idx].key == key:
+                return self.storage[idx].value
+        return None
 
 
     def resize(self):
@@ -101,9 +98,10 @@ class HashTable:
         '''
         self.capacity *= 2
         temp_storage = [None] * self.capacity
-        for i in range(self.count):
-            new_idx = self._hash_mod(self.storage[i].key)
-            temp_storage[new_idx] = self.storage[i]
+        for i in range(self.capacity // 2):
+            if self.storage[i] != None:
+                new_idx = self._hash_mod(self.storage[i].key)
+                temp_storage[new_idx] = self.storage[i]
         self.storage = temp_storage
 
 
