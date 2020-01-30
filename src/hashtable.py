@@ -85,7 +85,11 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        idx = self._hash_mod(key)
+        if self.storage[idx] != None:
+            return self.storage[idx].value
+        else:
+            return None
 
 
     def resize(self):
