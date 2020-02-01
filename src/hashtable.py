@@ -6,6 +6,8 @@ class LinkedPair:
         self.key = key
         self.value = value
         self.next = None
+    def __str__(self):
+        return f'{self.key}, {self.value}, {self.next}'
 
 class HashTable:
     '''
@@ -53,9 +55,12 @@ class HashTable:
         '''
 
         idx = self._hash_mod(key)
+        link = LinkedPair(key, value)
         if self.storage[idx] != None:
-            print("** Warning! A previous entry is being overwritten! **")
-        self.storage[idx] = LinkedPair(key, value)
+            link.next = self.storage[idx]
+            self.storage[idx] = link
+        else:
+            self.storage[idx] = link
 
 
 
@@ -68,10 +73,22 @@ class HashTable:
         Fill this in.
         '''
         idx = self._hash_mod(key)
-        if self.storage[idx] == None:
+        curr_entry = self.storage[idx]
+        if curr_entry == None:
             print("** Warning! Key not found! **")
         else:
-            self.storage[idx] = None
+            if curr_entry.key == key:
+                self.storage[idx] = curr_entry.next
+            else:
+                removed = False
+                while curr_entry.next != None:
+                    if curr_entry.next.key == key:
+                        curr_entry.next = curr_entry.next.next
+                        removed = True
+                    else:
+                        curr_entry = curr_entry.next
+                if not removed:
+                    print("** Warning! Key not found! **")
 
 
     def retrieve(self, key):
@@ -83,9 +100,12 @@ class HashTable:
         Fill this in.
         '''
         idx = self._hash_mod(key)
-        if self.storage[idx] != None:
-            if self.storage[idx].key == key:
-                return self.storage[idx].value
+        curr_entry = self.storage[idx]
+        while curr_entry != None:
+            if curr_entry.key == key:
+                return curr_entry.value
+            else:
+                curr_entry = curr_entry.next
         return None
 
 
@@ -97,12 +117,13 @@ class HashTable:
         Fill this in.
         '''
         self.capacity *= 2
-        temp_storage = [None] * self.capacity
-        for i in range(self.capacity // 2):
-            if self.storage[i] != None:
-                new_idx = self._hash_mod(self.storage[i].key)
-                temp_storage[new_idx] = self.storage[i]
-        self.storage = temp_storage
+        temp_storage = self.storage[:]
+        self.storage = [None] * self.capacity
+        for i in range(len(temp_storage)):
+            curr_entry = temp_storage[i]
+            while curr_entry != None:
+                self.insert(curr_entry.key, curr_entry.value)
+                curr_entry = curr_entry.next
 
 
 
